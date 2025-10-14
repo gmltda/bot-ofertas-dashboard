@@ -12,9 +12,11 @@ import requests
 # ==========================
 # Configuração Trello
 # ==========================
-TRELLO_KEY = os.getenv("TRELLO_KEY", "<SUA_TRELLO_KEY_AQUI>")
-TRELLO_TOKEN = os.getenv("TRELLO_TOKEN", "<SEU_TRELLO_TOKEN_AQUI>")
-TRELLO_LIST_ID = os.getenv("TRELLO_LIST_ID", "<SEU_TRELLO_LIST_ID_AQUI>")
+import os
+
+TRELLO_KEY = os.getenv("TRELLO_KEY")
+TRELLO_TOKEN = os.getenv("TRELLO_TOKEN")
+TRELLO_LIST_ID = os.getenv("TRELLO_LIST_ID")
 
 
 # ==========================
