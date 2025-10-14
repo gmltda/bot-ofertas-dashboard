@@ -184,8 +184,18 @@ def minerar_keyword(keyword: str, session: BrowserSession) -> List[Dict]:
     try:
         if session and session.context:
             page = session.context.new_page()
-            ad_url = f"https://www.facebook.com/ads/library/?q={requests.utils.quote(keyword)}"
+
+            # Usa o link completo da Ad Library com filtros corretos
+            ad_url = (
+                f"https://www.facebook.com/ads/library/"
+                f"?active_status=active&ad_type=all&country=BR&is_targeted_country=false"
+                f"&media_type=all&q={requests.utils.quote(keyword)}&search_type=keyword_unordered"
+            )
             page.goto(ad_url)
+            page.wait_for_load_state("networkidle")
+            print(f"[Playwright] Página carregada: {ad_url}")
+
+            # Pequena pausa pra garantir carregamento completo da lista
             time.sleep(random.uniform(1.5, 3.0))
             media_candidate = None
             for candidate in [
