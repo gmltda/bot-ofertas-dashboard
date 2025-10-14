@@ -147,7 +147,19 @@ class BrowserSession:
             print("[Playwright] Não instalado. Rode 'pip install playwright' e 'python -m playwright install'.")
             return False
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.chromium.launch(headless=True)
+        # Detecta caminho do Chromium baixado no Render
+        try:
+            from pathlib import Path
+            chromium_path = Path("/opt/render/project/src/.cache/ms-playwright")
+            found = list(chromium_path.glob("**/chrome-linux/headless_shell"))
+            exec_path = str(found[0]) if found else None
+        except Exception:
+            exec_path = None
+
+        if exec_path:
+            self.browser = self.playwright.chromium.launch(headless=True, executable_path=exec_path)
+        else:
+            self.browser = self.playwright.chromium.launch(headless=True)
         self.context = self.browser.new_context()
         print("[Playwright] Navegador iniciado.")
         return True
@@ -202,6 +214,9 @@ def run_manual(keyword: str) -> None:
         print(f"[Minerador] Ignorado (já minerado nas últimas 24h): {keyword}")
         return
     session = BrowserSession()
+    # pequena espera para garantir que Chromium finalize instalação
+    import time
+    time.sleep(3)
     started = session.start()
     try:
         anuncios = minerar_keyword(keyword, session if started else None)
