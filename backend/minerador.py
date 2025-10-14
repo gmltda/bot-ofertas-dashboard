@@ -183,19 +183,52 @@ def minerar_keyword(keyword: str, session: BrowserSession) -> List[Dict]:
     anuncios: List[Dict] = []
     try:
         if session and session.context:
-            page = session.context.new_page()
-
-            # Usa o link completo da Ad Library com filtros corretos
+            # URL completa forçando "Todos os anúncios" (não política)
             ad_url = (
-                f"https://www.facebook.com/ads/library/"
-                f"?active_status=active&ad_type=all&country=BR&is_targeted_country=false"
-                f"&media_type=all&q={requests.utils.quote(keyword)}&search_type=keyword_unordered"
+                "https://www.facebook.com/ads/library/?"
+                "active_status=active&ad_type=all&country=BR"
+                "&is_targeted_country=false&media_type=all"
+                f"&q={requests.utils.quote(keyword)}&search_type=keyword_unordered"
             )
-            page.goto(ad_url)
-            page.wait_for_load_state("networkidle")
+
+            # Abre página com cabeçalhos que evitam redirecionamento automático
+            page = session.context.new_page()
+            try:
+                page.set_extra_http_headers({
+                    "Referer": "https://www.facebook.com/ads/library/",
+                    "User-Agent": (
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/120.0.0.0 Safari/537.36"
+                    ),
+                })
+            except Exception:
+                # Fallback: algumas versões usam headers no contexto
+                try:
+                    session.context.set_extra_http_headers({
+                        "Referer": "https://www.facebook.com/ads/library/",
+                        "User-Agent": (
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/120.0.0.0 Safari/537.36"
+                        ),
+                    })
+                except Exception:
+                    pass
+
+            page.goto(ad_url, wait_until="networkidle")
             print(f"[Playwright] Página carregada: {ad_url}")
 
-            # Pequena pausa pra garantir carregamento completo da lista
+            # Remove cookie e modal de política se aparecer
+            try:
+                page.evaluate("""
+                    document.querySelectorAll('[role=dialog]').forEach(e=>e.remove());
+                    document.cookie = "fb_ad_type=all; path=/;";
+                """)
+            except Exception:
+                pass
+
+            # Pausa adicional para garantir a lista carregada
             time.sleep(random.uniform(1.5, 3.0))
             media_candidate = None
             for candidate in [
