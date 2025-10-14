@@ -6,6 +6,12 @@ import subprocess
 import signal
 from datetime import datetime
 
+# Garantir que o Playwright tenha o Chromium instalado
+try:
+    subprocess.run(["python", "-m", "playwright", "install", "chromium"], check=True)
+except Exception as e:
+    print("[WARN] Falha ao instalar Chromium automaticamente:", e)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
