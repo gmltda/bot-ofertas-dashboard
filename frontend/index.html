@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Bot Ofertas</title>
+  <link rel="preconnect" href="https://rsms.me/" crossorigin>
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Bot Ofertas — Painel de Mineração</h1>
+
+    <div class="controls">
+      <input id="keyword" placeholder="Digite a palavra-chave..." />
+      <select id="mode">
+        <option value="manual">🔍 Manual</option>
+        <option value="txt">📖 Arquivo TXT</option>
+      </select>
+      <button id="startBtn" class="btn start">🚀 Iniciar</button>
+      <button id="stopBtn" class="btn stop">🛑 Parar</button>
+    </div>
+
+    <div class="status">
+      <p>Status: <span id="status">-</span></p>
+      <p>Palavras mineradas hoje: <span id="count">0</span></p>
+    </div>
+
+    <h2>⭐ Favoritos</h2>
+    <div id="favoritos" class="favoritos">
+      <p class="muted">Carregando favoritos...</p>
+    </div>
+  </div>
+
+  <script src="static/js/dashboard.js"></script>
+  <script>
+    // Inicializa status e favoritos na carga
+    setInterval(updateStatus, 5000);
+    updateStatus();
+    updateFavoritos();
+  </script>
+</body>
+</html>
