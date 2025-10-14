@@ -1,5 +1,0 @@
-flask
-playwright
-requests
-keyboard
-pytrends
