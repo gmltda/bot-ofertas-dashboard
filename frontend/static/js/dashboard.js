@@ -1,6 +1,6 @@
 const PROD_URL = "https://bot-oferta.vagalimitada.com";
 const DEV_URL = "http://127.0.0.1:10000";
-const BACKEND_URL = (location.hostname === "127.0.0.1" || location.hostname === "localhost") ? DEV_URL : PROD_URL;
+const BACKEND_URL = "https://bot-ofertas-dashboard.onrender.com";
 
 async function updateStatus() {
   try {
